@@ -36,8 +36,8 @@ export const createCoinbaseCharge = (tokenRecipientAddress: string, productId: s
 				name: stEndUser.COINBASE_TOKEN_PURCHASE_NAME,
 				description: coinbaseTokenPurchaseDescription(product),
 				local_price: {
-					amount: `${product.priceUSD}`,
-					currency: 'USD'
+					amount: `${product.priceEUR}`,
+					currency: 'EUR'
 				},
 				pricing_type: 'fixed_price',
 				metadata: {

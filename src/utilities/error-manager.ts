@@ -9,11 +9,11 @@ export const stError = {
 };
 
 export const stEndUser = {
-	COINBASE_TOKEN_PURCHASE_NAME: '[YourToken] Tokens'
+	COINBASE_TOKEN_PURCHASE_NAME: 'ACA'
 };
 
 export const coinbaseTokenPurchaseDescription = (product: Product): string => {
-	return `You are purchasing ${numberWithCommas(product.tokenAmount)} [Your Token] tokens`;
+	return `You are purchasing ${numberWithCommas(product.tokenAmount)} Academic Coins`;
 };
 
 export enum ERROR_CODES {
