@@ -1,7 +1,7 @@
 [
   {
     "_id": {
-      "$oid": "B17FE42A-EC05-4AF0-AC09-550A173092EF"
+      "$oid": "5b1ec82fc28a1112ee2af2fe"
     },
     "priceEUR": 180,
     "tokenAmount": 10000,
@@ -9,7 +9,7 @@
   },
   {
     "_id": {
-      "$oid": "AB1CD584-1D2E-4819-AC58-59B490B3D4CE"
+      "$oid": "5b1ec82fc28a1112ee2af2fd"
     },
     "priceEUR": 9000,
     "tokenAmount": 500000,
@@ -17,7 +17,7 @@
   },
   {
     "_id": {
-      "$oid": "E38CEB38-D175-4FAE-8FD5-183E9AA8F1E1"
+      "$oid": "5b1ec82fc28a1112ee2af2fc"
     },
     "priceEUR": 45,
     "tokenAmount": 2500,
@@ -25,7 +25,7 @@
   },
   {
     "_id": {
-      "$oid": "8AB4F687-0E32-422A-BD84-BD58862B6A93"
+      "$oid": "5b1ec82fc28a1112ee2af2fb"
     },
     "priceEUR": 900,
     "tokenAmount": 50000,
@@ -33,7 +33,7 @@
   },
   {
     "_id": {
-      "$oid": "F3D84E7B-A3F2-4541-8E50-1A65BC63BFEE"
+      "$oid": "5b1ec82fc28a1112ee2af2fa"
     },
     "priceEUR": 90000,
     "tokenAmount": 5000000,
