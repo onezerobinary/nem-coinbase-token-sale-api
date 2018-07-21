@@ -21,7 +21,7 @@ import {
 	PlainMessage } from 'nem-library';
 import { onChargeSuccess } from 'services/purchase-service';
 import { TRANSACTION_MESSAGE_LENGTH } from 'utilities/constants';
-import { tokenHoldingAccountAddress, usdToXem, xemToUsd } from 'utilities/nem-util';
+import {eurToXem, tokenHoldingAccountAddress, usdToXem, xemToEur, xemToUsd} from 'utilities/nem-util';
 import { generateHashId, precisionRound } from 'utilities/tools-util';
 import { findById, saveWithId, deleteById, findOneThatContains } from 'utilities/mongodb-util';
 const nemConfig = require('../../nem-config.json');
@@ -89,7 +89,8 @@ const movePendingTransaction = (transaction: XemTransaction): XemTransaction => 
 			}
 			pendingTransaction.totalPaid += totalPaid;
 			pendingTransaction.usdPaid += transfer.usdPaid;
-			if (pendingTransaction.totalPaid >= pendingTransaction.quotedAmount) {
+			pendingTransaction.eurPaid += transfer.eurPaid;
+			if (pendingTransaction.totalPaid >= pendingTransaction.quotedEURAmount) {
 				const product: Product = await findById<Product>(DB_PRODUCTS, pendingTransaction.productId.toHexString());
 				pendingTransaction.transactionCompletedTimestamp = new Date().toISOString();
 				onChargeSuccess(
@@ -144,20 +145,24 @@ export const initiateXEMPurchaseHandler = (req: Request): Promise<any> => {
 			const createdDate = new Date();
 			const hashId = await generateHashId(senderAddress, createdDate.toISOString());
 			const product = await findById<Product>(DB_PRODUCTS, req.body.productId);
-			const quotedAmount = await usdToXem(product.priceUSD);
+			// const quotedAmount = await usdToXem(product.priceUSD);
+			const quotedUSDAmount = await usdToXem(product.priceUSD);
+			const quotedEURAmount = await eurToXem(product.priceEUR);
 			const data: XemTransaction = {
 				_id: new ObjectID(),
 				tokenRecipientAddress: senderAddress,
 				tokenType: req.body.tokenType,
 				productId: product._id,
 				totalPaid: 0,
-				quotedAmount: precisionRound(quotedAmount * 1e6, 0),
+				quotedUSDAmount: precisionRound(quotedUSDAmount * 1e6, 0),
+				quotedEURAmount: precisionRound(quotedEURAmount * 1e6, 0),
 				usdPaid: 0,
+				eurPaid: 0,
 				message: MESSAGE_PREFIX + hashId,
 				createdAt: createdDate
 			};
 			await saveWithId<XemTransaction>(DB_PENDING_XEM_CHARGES, data);
-			resolve({tokenRecipientAddress: tokenHoldingAccountAddress(), message: data.message, usdValue: product.priceUSD, xemAmount: precisionRound(quotedAmount, 6)});
+			resolve({tokenRecipientAddress: tokenHoldingAccountAddress(), message: data.message, usdValue: product.priceUSD, eurValue: product.priceEUR,  xemAmount: precisionRound(quotedEURAmount, 6)});
 		} catch (err) {
 			reject(err);
 		}
@@ -175,6 +180,7 @@ const formatIncomingTransaction = (transaction: TransferTransaction): Promise<Xe
 			let tokenType = TokenType.NA;
 			let paid = 0;
 			let usdPaid = 0;
+			let eurPaid = 0;
 			/**
 			 * This first part is a safeguard - it means someone sent a Mosaic token
 			 * instead of XEM. Handle these scenario accordingly
@@ -183,7 +189,7 @@ const formatIncomingTransaction = (transaction: TransferTransaction): Promise<Xe
 				transaction.mosaics().map(mosaic => {
 					if (mosaic.mosaicId.namespaceId === nemConfig.mosaicNamespace
 						&& mosaic.mosaicId.name === nemConfig.mosaicForTransfer) {
-						tokenType = TokenType.CHE;
+						tokenType = TokenType.TOK;
 						paid += mosaic.quantity;
 					}
 				});
@@ -194,6 +200,7 @@ const formatIncomingTransaction = (transaction: TransferTransaction): Promise<Xe
 				tokenType = TokenType.XEM;
 				paid = transaction.xem().amount * 1e6;
 				usdPaid = await xemToUsd(paid);
+				eurPaid = await xemToEur(paid);
 			}
 			const formmatedTransaction: XemTransaction = {
 				_id: new ObjectID(),
@@ -201,6 +208,7 @@ const formatIncomingTransaction = (transaction: TransferTransaction): Promise<Xe
 				tokenType: tokenType,
 				totalPaid: paid,
 				usdPaid: usdPaid,
+				eurPaid: eurPaid,
 				createdAt: new Date()
 			};
 			if (transaction.message) {

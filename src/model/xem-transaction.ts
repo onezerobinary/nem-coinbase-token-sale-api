@@ -12,14 +12,14 @@ export const DB_PROBLEM_XEM_CHARGES = 'problemXemCharges';
 /**
  * Used in the message field for mosaic transfers
  */
-export const MESSAGE_PREFIX = 'c:';
+export const MESSAGE_PREFIX = 'info:';
 
 /**
- * Change CHE with your own token Ticker
+ * Change TOK with your own token Ticker
  */
 export enum TokenType {
 	XEM = 'XEM',
-	CHE = 'CHE',
+	TOK = 'ACA',
 	NA = 'NA'
 }
 
@@ -29,7 +29,9 @@ export interface XemTransaction {
 	tokenType: TokenType;
 	productId?: ObjectID;
 	usdPaid?: number;
-	quotedAmount?: number;
+	eurPaid?: number;
+	quotedUSDAmount?: number;
+	quotedEURAmount?: number;
 	totalPaid: number;
 	transactionCompletedTimestamp?: string;
 	message?: string;

@@ -1,7 +1,12 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { AccountHttp, Mosaic, SimpleWallet, Address } from 'nem-library';
 import {
-	CHE_TOTAL_QUANTITY, SUPPLY_RELATED_ADJUSTMENT, URL_COIN_CAP_XEM_USD_VALUE, XEM_MARKET_CAP } from 'utilities/constants';
+    TOKEN_TOTAL_QUANTITY,
+    SUPPLY_RELATED_ADJUSTMENT,
+    URL_COIN_CAP_XEM_EUR_VALUE,
+    URL_COIN_CAP_XEM_USD_VALUE,
+    XEM_MARKET_CAP
+} from 'utilities/constants';
 import { precisionRound } from 'utilities/tools-util';
 
 const fs = require('fs');
@@ -27,6 +32,27 @@ const xemUSDValue = (): Promise<string> => {
 	});
 };
 
+/**
+ * Get EUR Value for 1 XEM
+ * @returns {Promise<number>}
+ */
+const xemEURValue = (): Promise<string> => {
+    return new Promise<string>(async (resolve, reject) => {
+        try {
+            const config: AxiosRequestConfig = {
+                url: URL_COIN_CAP_XEM_EUR_VALUE,
+                method: 'get',
+                headers: { 'Content-Type': 'application/json' }
+            };
+            const json: any = await axios(config);
+            resolve(json.data.data.quotes.EUR.price);
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
+
 export const usdToXem = (priceUSD: number): Promise<number> => {
 	return new Promise<number>(async (resolve, reject) => {
 		try {
@@ -37,6 +63,30 @@ export const usdToXem = (priceUSD: number): Promise<number> => {
 			reject(err);
 		}
 	});
+};
+
+export const eurToXem = (priceEUR: number): Promise<number> => {
+    return new Promise<number>(async (resolve, reject) => {
+        try {
+            const eurStr = await xemEURValue();
+            const eurVal = parseFloat(eurStr);
+            resolve(precisionRound((priceEUR / eurVal), 6));
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
+export const xemToEur = (xemAmount: number): Promise<number> => {
+    return new Promise<number>(async (resolve, reject) => {
+        try {
+            const eurStr = await xemEURValue();
+            const eurVal = parseFloat(eurStr);
+            resolve(precisionRound((eurVal * xemAmount) / 1e6, 2));
+        } catch (err) {
+            reject(err);
+        }
+    });
 };
 
 export const xemToUsd = (xemAmount: number): Promise<number> => {
@@ -54,7 +104,7 @@ export const xemToUsd = (xemAmount: number): Promise<number> => {
 export const calculateTokenFee = (tokenAmount: number): Promise<number> => {
 	return new Promise<number>(async (resolve, reject) => {
 		try {
-			const xemEquivalent = ((XEM_MARKET_CAP * (tokenAmount * 1e6)) / CHE_TOTAL_QUANTITY) / 1e4;
+			const xemEquivalent = ((XEM_MARKET_CAP * (tokenAmount * 1e6)) / TOKEN_TOTAL_QUANTITY) / 1e4;
 			const unweightedFee = Math.abs(xemEquivalent - SUPPLY_RELATED_ADJUSTMENT);
 			let fee = precisionRound(unweightedFee * 0.05, 6);
 			if (fee >= 1.25) { fee = 1.25; }
