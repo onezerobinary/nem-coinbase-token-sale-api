@@ -1,41 +1,41 @@
 [
   {
     "_id": {
-      "$oid": "5b1ec82fc28a1112ee2af2fe"
+      "$oid": "B17FE42A-EC05-4AF0-AC09-550A173092EF"
     },
-    "priceUSD": 180,
+    "priceEUR": 180,
     "tokenAmount": 10000,
     "isEnabled": true
   },
   {
     "_id": {
-      "$oid": "5b1ec82fc28a1112ee2af2fd"
+      "$oid": "AB1CD584-1D2E-4819-AC58-59B490B3D4CE"
     },
-    "priceUSD": 9000,
+    "priceEUR": 9000,
     "tokenAmount": 500000,
     "isEnabled": true
   },
   {
     "_id": {
-      "$oid": "5b1ec82fc28a1112ee2af2fc"
+      "$oid": "E38CEB38-D175-4FAE-8FD5-183E9AA8F1E1"
     },
-    "priceUSD": 45,
+    "priceEUR": 45,
     "tokenAmount": 2500,
     "isEnabled": true
   },
   {
     "_id": {
-      "$oid": "5b1ec82fc28a1112ee2af2fb"
+      "$oid": "8AB4F687-0E32-422A-BD84-BD58862B6A93"
     },
-    "priceUSD": 900,
+    "priceEUR": 900,
     "tokenAmount": 50000,
     "isEnabled": true
   },
   {
     "_id": {
-      "$oid": "5b1ec82fc28a1112ee2af2fa"
+      "$oid": "F3D84E7B-A3F2-4541-8E50-1A65BC63BFEE"
     },
-    "priceUSD": 90000,
+    "priceEUR": 90000,
     "tokenAmount": 5000000,
     "isEnabled": true
   }
